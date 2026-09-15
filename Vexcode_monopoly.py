@@ -5,9 +5,6 @@ current_space_number = 0
 dice1 = 0
 dice2 = 0
 space_to_move = 0
-FWD = Event()
-LT = Event()
-RT = Event()
 move_forward = Event()
 right_turn = Event()
 left_turn = Event()
@@ -24,9 +21,9 @@ def roll_dice():
 
 def move():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    brain.screen.print(str("Moving") + str(str("spaces_to_move") + str("spaces!")))
+    brain.screen.print(str("Moving") + str(str(space_to_move) + str("spaces!")))
     brain.screen.next_row()
-    for repeat_count in range(int(current_space_number)):
+    for repeat_count in range(int(space_to_move)):
         move_forward.broadcast_and_wait()
         current_space_number = current_space_number + 1
         if current_space_number > 12:
@@ -47,11 +44,15 @@ def play_game():
         roll_dice()
         move()
         complete_task()
+        wait(4, SECONDS)
+        brain.screen.set_cursor(1, 1)
+        brain.screen.clear_row(4)
+        brain.screen.set_cursor(brain.screen.row(), 1)
         wait(5, MSEC)
 
 def complete_task():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    brain.screen.print(str("Landed on space") + str(current_space_number))
+    brain.screen.print(str("Landed on ") + str(current_space_number))
     brain.screen.next_row()
     wait(1, SECONDS)
     if current_space_number == 1:
@@ -102,42 +103,42 @@ def complete_task():
         move_forward.broadcast_and_wait()
         right_turn.broadcast_and_wait()
 
-def FWD_callback_0():
+def move_forward_callback_0():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
+    motor_5.spin_for(FORWARD, 400, DEGREES)
 
-def FWD_callback_1():
+def move_forward_callback_1():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
-
-def RT_callback_0():
-    global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
-
-def RT_callback_1():
-    global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
+    motor_1.spin_for(FORWARD, 400, DEGREES)
 
 def when_started1():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
     current_space_number = 1
     play_game()
 
-def LT_callback_0():
+def right_turn_callback_0():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
+    motor_1.spin_for(FORWARD, 215, DEGREES)
 
-def LT_callback_1():
+def right_turn_callback_1():
     global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
-    pass
+    motor_5.spin_for(REVERSE, 215, DEGREES)
+
+def left_turn_callback_0():
+    global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
+    motor_5.spin_for(FORWARD, 215, DEGREES)
+
+def left_turn_callback_1():
+    global myVariable, current_space_number, dice1, dice2, space_to_move, FWD, LT, RT, my_event, move_forward, right_turn, left_turn, screen_precision, console_precision
+    motor_1.spin_for(REVERSE, 215, DEGREES)
 
 # system event handlers
-FWD(FWD_callback_0)
-FWD(FWD_callback_1)
-RT(RT_callback_0)
-RT(RT_callback_1)
-LT(LT_callback_0)
-LT(LT_callback_1)
+move_forward(move_forward_callback_0)
+move_forward(move_forward_callback_1)
+right_turn(right_turn_callback_0)
+right_turn(right_turn_callback_1)
+left_turn(left_turn_callback_0)
+left_turn(left_turn_callback_1)
 # add 15ms delay to make sure events are registered correctly.
 wait(15, MSEC)
 
